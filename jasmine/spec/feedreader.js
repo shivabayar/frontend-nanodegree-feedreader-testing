@@ -31,12 +31,25 @@ $(function() {
          * in the allFeeds object and ensures it has a URL defined
          * and that the URL is not empty.
          */
-
+        it('urls are defined and not empty', function() {
+            for(const allFeed of allFeeds) {
+                expect(allFeed.url).toBeDefined();
+                expect(allFeed.url).not.toEqual("");
+            }
+        });
 
         /* TODO: Write a test that loops through each feed
          * in the allFeeds object and ensures it has a name defined
          * and that the name is not empty.
          */
+        it('names are defined and not empty', function() {
+            for(const allFeed of allFeeds) {
+                expect(allFeed.name).toBeDefined();
+                expect(allFeed.name).not.toEqual("");
+
+            }
+        });
+
     });
 
 
@@ -53,6 +66,22 @@ $(function() {
           * should have two expectations: does the menu display when
           * clicked and does it hide when clicked again.
           */
+    describe('The menu', function() {
+        it('is hidden by default', function() {
+            const menuClass = $('body').attr('class');
+            expect(menuClass).toEqual('menu-hidden');
+        });
+
+        it('should show/hide when clicked', function() {
+            $('.menu-icon-link').trigger('click');
+            let menuClass = $('body').attr('class');
+            expect(menuClass).toEqual('');
+            $('.menu-icon-link').trigger('click');
+            menuClass = $('body').attr('class');
+            expect(menuClass).toEqual('menu-hidden');
+        });
+
+    });
 
     /* TODO: Write a new test suite named "Initial Entries" */
 
@@ -62,6 +91,19 @@ $(function() {
          * Remember, loadFeed() is asynchronous so this test will require
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
+    describe('Initial Entries', function() {
+
+        beforeEach(function(done) {
+            loadFeed(0, function() {
+                done();
+            });
+        });
+
+        it('should ensure loadFeed  is complete', function(done) {
+            expect($('.feed .entry').length).toBeGreaterThanOrEqual(0);
+            done();
+        });
+    });
 
     /* TODO: Write a new test suite named "New Feed Selection" */
 
@@ -69,4 +111,23 @@ $(function() {
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
+    describe('New Feed Selection', function() {
+        let entriesFirst, entriesSecond;
+
+        beforeEach(function(done) {
+            loadFeed(0, function() {
+                entriesFirst = $('.feed .entry');
+            });
+            loadFeed(1, function() {
+                entriesSecond = $('.feed .entry');
+                done();
+            });
+        });
+
+        it('should ensure when new feed is loaded content actually changes.', function(done) {
+            if(entriesFirst && entriesSecond && entriesFirst.length > 0 && entriesSecond.length > 0)
+                expect(entriesSecond[0].innerText).not.toEqual(entriesFirst[0].innerText);
+            done();
+        });
+    });
 }());
